@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Auki.ConjureKit;
 using Auki.ConjureKit.Manna;
+using Auki.Integration.ARFoundation;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.XR.ARFoundation;
@@ -33,7 +34,8 @@ public class PersistentARinDomain : MonoBehaviour
             AppSecret);
         _manna = new Manna(_conjureKit);
     
-        _manna.GetOrCreateFrameFeederComponent().AttachMannaInstance(_manna);
+        var textureProviderComp = CameraFrameProvider.GetOrCreateComponent();
+        textureProviderComp.OnNewFrameReady += frame => _manna.ProcessVideoFrameTexture(frame.Texture, frame.ARProjectionMatrix, frame.ARWorldToCameraMatrix);
         _manna.OnLighthouseTracked += OnLighthouseTracked;
         
         createCubeButton.onClick.AddListener(OnCubeButtonClick);
